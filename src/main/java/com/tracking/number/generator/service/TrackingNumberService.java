@@ -2,10 +2,10 @@ package com.tracking.number.generator.service;
 
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
-import java.time.ZoneOffset;
+import java.time.format.DateTimeFormatter;
 import java.util.UUID;
+import java.util.concurrent.atomic.AtomicLong;
 
-import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 
 import com.tracking.number.generator.dto.TrackingNumberResponse;
@@ -13,26 +13,31 @@ import com.tracking.number.generator.dto.TrackingNumberResponse;
 @Service
 public class TrackingNumberService {
 
-    private final StringRedisTemplate redisTemplate;
+    private final AtomicLong counter = new AtomicLong(1000);
+    private final DateTimeFormatter formatter = DateTimeFormatter.ISO_OFFSET_DATE_TIME;
 
-    public TrackingNumberService(StringRedisTemplate redisTemplate) {
-        this.redisTemplate = redisTemplate;
-    }
+    public TrackingNumberResponse generateTrackingNumber(
+            String originCountry, String destinationCountry, BigDecimal weight,
+            String createdAt, UUID customerId, String customerName, String customerSlug
+    ) {
+        long nanoTime = System.nanoTime();
+        long sequence = counter.getAndIncrement();
 
-    public TrackingNumberResponse generateTrackingNumber(String origin, String destination,
-                                                          BigDecimal weight, OffsetDateTime createdAt,
-                                                          UUID customerId, String customerName,
-                                                          String customerSlug) {
-        // Atomic counter using Redis
-        String key = "tracking-number-counter";
-        Long sequence = redisTemplate.opsForValue().increment(key);
+        // Combine elements to form a raw string
+        String base = originCountry + destinationCountry +
+                Math.abs(customerId.hashCode()) +
+                Long.toHexString(nanoTime) + sequence;
 
-        // Construct unique ID using params + sequence
-        String raw = origin + destination + customerSlug.replace("-", "").toUpperCase() + String.format("%06d", sequence);
-        String trackingNumber = raw.replaceAll("[^A-Z0-9]", "").substring(0, Math.min(16, raw.length()));
+        // Clean up and format
+        String tracking = base.replaceAll("[^A-Z0-9]", "").toUpperCase();
+        if (tracking.length() > 16) tracking = tracking.substring(0, 16);
 
-        OffsetDateTime now = OffsetDateTime.now(ZoneOffset.UTC);
-        return new TrackingNumberResponse(trackingNumber, now);
+        if (!tracking.matches("^[A-Z0-9]{1,16}$")) {
+            throw new RuntimeException("Generated tracking number is invalid.");
+        }
+
+        return new TrackingNumberResponse(tracking, OffsetDateTime.now().format(formatter));
     }
 }
+
 
