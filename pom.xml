@@ -9,9 +9,9 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.tracking.number</groupId>
-	<artifactId>tracking-number-app</artifactId>
+	<artifactId>tracking-number-generate-app</artifactId>
 	<version>1.0.0</version>
-	<name>tracking-number-app</name>
+	<name>tracking-number-generate-app</name>
 	<description>Tracking Number Generator for Spring Boot</description>
 	<packaging>jar</packaging>
 	
@@ -24,11 +24,6 @@
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web</artifactId>
-		</dependency>
-		
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-data-redis</artifactId>
 		</dependency>
 
 		<dependency>
@@ -46,19 +41,6 @@
         <dependency>
             <groupId>jakarta.validation</groupId>
             <artifactId>jakarta.validation-api</artifactId>
-        </dependency>
-        
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-test</artifactId>
-			<scope>test</scope>
-		</dependency>
-
-		<!-- Mockito (optional, comes with spring-boot-starter-test) -->
-        <dependency>
-            <groupId>org.mockito</groupId>
-            <artifactId>mockito-core</artifactId>
-            <scope>test</scope>
         </dependency>
         
 	</dependencies>

@@ -1,1 +1,0 @@
-web: java -jar target/tracking-number-app-1.0.0.jar
