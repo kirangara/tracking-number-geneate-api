@@ -5,6 +5,3 @@ services:
     plan: free
     buildCommand: "./mvnw clean package"
     startCommand: "java -jar target/*.jar"
-    envVars:
-      - key: JAVA_HOME
-        value: /opt/render/project/.render/java
