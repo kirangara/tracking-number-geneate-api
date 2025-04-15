@@ -7,7 +7,7 @@ WORKDIR /app
 # Copy the jar file
 COPY target/tracking-number-generate-app-1.0.0.jar app.jar
 
-EXPOSE 8080
+EXPOSE 8001
 
 # Run the application
 CMD ["java", "-jar", "app.jar"]
